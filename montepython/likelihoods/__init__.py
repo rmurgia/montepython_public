@@ -12,8 +12,8 @@ class S8_DESY1(Likelihood_prior):
         sigma8 = cosmo.sigma8()
         Omega_m = cosmo.Omega_m()
         S8 = sigma8*(Omega_m/0.3)**(0.5)
-	if S8 > self.S8:
-		loglkl = -0.5 * (S8 - self.S8) ** 2 / (self.sigma_up ** 2)
-	else:
-		loglkl = -0.5 * (S8 - self.S8) ** 2 / (self.sigma_low ** 2)         
-	return loglkl
+        if S8 > self.S8:
+            loglkl = -0.5 * (S8 - self.S8) ** 2 / (self.sigma_up ** 2)
+        else:
+            loglkl = -0.5 * (S8 - self.S8) ** 2 / (self.sigma_low ** 2)         
+        return loglkl

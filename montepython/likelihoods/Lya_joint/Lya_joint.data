@@ -1,0 +1,52 @@
+# Lyman-alpha likelihood based on the structure of the "Lya_abg" MontePython likelihood described in detail in Ref. 1907.01496 
+# Likelihood re-adapted by R. Murgia to test DM isocurvature modes: see Ref. ....
+
+# This likelihood should always be used together with
+# a CMB likelihood (e.g. Planck).
+
+# Important! This likelihood requires CLASS version 2.9 or higher.
+
+# Data directory and bin file (for models that fail the checks)
+Lya_joint.data_directory   = data.path['data']
+Lya_joint.bin_file_name = "Lya_joint_bin_file.txt"
+
+# Which dataset we are using
+Lya_joint.DATASET = "joint"
+Lya_joint.zp = 4.2
+
+# The redshift array had first the XQ-100 z (low z) and then the MIKE HIRES z (high z),
+# so we need num_z_XQ to rescale the redshift array when using only MIKE HIRES
+Lya_joint.num_z_XQ = 7
+
+# z with overlapping data of both XQ-100 and MIKE HIRES
+Lya_joint.num_z_overlap = 1
+
+# Files corresponding to grid of simulations
+Lya_joint.astro_spectra_file = "Lya_grid/LCDM_ratio_matrix_reshaped.pkl"
+Lya_joint.astro_grid_file = "Lya_grid/LCDM_param_matrix_reshaped.dat"
+Lya_joint.PF_ref_file = "Lya_grid/PF_LCDM_ref_irsic_kdata_11bins.pkl"
+
+# Files corresponding to data and covmats
+Lya_joint.MIKE_spectra_file = "Lya_grid/y_M_reshaped.pkl"
+Lya_joint.HIRES_spectra_file = "Lya_grid/y_H_reshaped.pkl"
+Lya_joint.MIKE_cov_file = "Lya_grid/cov_M_inverted.pkl"
+Lya_joint.HIRES_cov_file = "Lya_grid/cov_H_inverted.pkl"
+Lya_joint.XQ_spectra_file = "Lya_grid/y_XQ_reshaped.pkl"
+Lya_joint.XQ_cov_file = "Lya_grid/cov_XQ_inverted.pkl"
+
+# Parameters related to the Kriging interpolation
+Lya_joint.epsilon = 1e-8
+Lya_joint.exponent = 6.
+
+# List of nuisance parameters expected by the likelihood
+Lya_joint.use_nuisance = ['T0a','T0s','gamma_a','gamma_s','Fz1','Fz2','Fz3','Fz4','Fz5','Fz6','Fz7','Fz8','Fz9','Fz10','F_UV']
+
+# z and k (in s/km) values for the lyman-alpha slope
+# can be changed with some care
+Lya_joint.k_s_over_km = 0.009
+Lya_joint.z = 3.
+
+# Other k (in h/Mpc) values used in the comparisons and checks
+Lya_joint.kmax  = 200.
+Lya_joint.kmin  = 0.01
+Lya_joint.k_size = 10000
