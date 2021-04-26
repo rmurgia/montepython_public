@@ -1,0 +1,5 @@
+# Values for DES (Year 1)
+
+S8_COSEBI_DESKIDS.S8      = 0.755
+S8_COSEBI_DESKIDS.sigma_up  = 0.019
+S8_COSEBI_DESKIDS.sigma_low  = 0.021
