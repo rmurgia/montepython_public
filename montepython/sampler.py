@@ -152,13 +152,13 @@ def read_args_from_bestfit(data, bestfit):
             data.mcmc_parameters[elem]['last_accepted'] = \
                 bestfit_values[bestfit_names.index(elem)] / \
                 data.mcmc_parameters[elem]['scale']
-            sys.stdout.write('from best-fit file : '+ elem+ ' = ')
+            print('from best-fit file : {} = '.format(elem))
             print(bestfit_values[bestfit_names.index(elem)] / \
                 data.mcmc_parameters[elem]['scale'])
         else:
             data.mcmc_parameters[elem]['last_accepted'] = \
                 data.mcmc_parameters[elem]['initial'][0]
-            sys.stdout.write('from input file    : '+ elem+ ' = ')
+            print('from input file : {} = '.format(elem))
             print(data.mcmc_parameters[elem]['initial'][0])
 
 
@@ -341,7 +341,7 @@ def get_covariance_matrix(cosmo, data, command_line):
 
     # Final print out, the actually used covariance matrix
     if not command_line.silent and not command_line.quiet:
-        sys.stdout.write('\nDeduced starting covariance matrix:\n')
+        print('\nDeduced starting covariance matrix:\n')
         print(parameter_names)
         print(matrix)
 
@@ -432,42 +432,41 @@ def get_minimum(cosmo, data, command_line, covmat):
 
     # For HST with 1 param the best is TNC with 'eps':stepsizes, bounds, tol, although bounds make it smlower (but avoids htting unphysical region)
     # For forecasts or Planck lite SLSQP with tol=0.00001 works well, but does not work for full Planck TTTEEE highl
-    #result = op.minimize(chi2_eff,
-    #                     parameters,
-    #                    args = (cosmo,data),
-    #                     #method='trust-region-exact',
-    #                     #method='BFGS',
-    #                     #method='TNC',
-    #                     #method='L-BFGS-B',
-    #                     method='SLSQP',
-    #                     #options={'eps':stepsizes},
-    #                     #constraints=cons,
-    #                     bounds=bounds,
-    #                     tol=command_line.minimize_tol)
-    #                     #options = {'disp': True})
-                                    #'initial_tr_radius': stepsizes,
-                                    #'max_tr_radius': stepsizes})
+    # result = op.minimize(chi2_eff,
+    #                      parameters,
+    #                      args = (cosmo,data),
+    #                      #method='trust-region-exact',
+    #                      #method='BFGS',
+    #                      #method='TNC',
+    #                      #method='L-BFGS-B',
+    #                      method='SLSQP',
+    #                      #options={'eps':stepsizes},
+    #                      #constraints=cons,
+    #                      bounds=bounds,
+    #                      tol=command_line.minimize_tol)
+    #                      #options = {'disp': True})
+    #                                 #'initial_tr_radius': stepsizes,
+    #                                 #'max_tr_radius': stepsizes})
 
-    #result = op.differential_evolution(chi2_eff,
-    #                                   bounds,
-    #                                   args = (cosmo,data))
-
+    # #result = op.differential_evolution(chi2_eff,
+    # #                                   bounds,
+    # #                                   args = (cosmo,data))
     result = minuit(chi2_eff,
-                         parameters,
-                         args = (cosmo,data),
-                         #method='trust-region-exact',
-                         #method='BFGS',
-                         #method='TNC',
-                         #method='L-BFGS-B',
-                         #method='SLSQP',
-                         #method='COBYLA',
-                         #options={'eps':stepsizes},
-                         #constraints=cons,
-                         bounds=bounds)
-                         #tol=command_line.minimize_tol)
-                         #options = {'disp': True})
-                                    #'initial_tr_radius': stepsizes,
-                                    #'max_tr_radius': stepsizes})    #try minuit
+                     parameters,
+                     args = (cosmo,data),
+                     #method='trust-region-exact',
+                     #method='BFGS',
+                     #method='TNC',
+                     #method='L-BFGS-B',
+                     #method='SLSQP',
+                     #method='COBYLA',
+                     #options={'eps':stepsizes},
+                     #constraints=cons,
+                     bounds=bounds)
+                     #tol=command_line.minimize_tol)
+                     #options = {'disp': True})
+                                #'initial_tr_radius': stepsizes,
+                                #'max_tr_radius': stepsizes})    #try minuit
 
     print('Final output of minimize')
     for index,elem in enumerate(parameter_names):
