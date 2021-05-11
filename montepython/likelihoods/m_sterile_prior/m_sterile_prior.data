@@ -1,0 +1,4 @@
+#Value for m_sterile
+#ACT only
+m_sterile_prior.mean      = 4.889
+m_sterile_prior.sigma  = 1.15

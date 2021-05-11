@@ -48,7 +48,7 @@ class Lya_joint(Likelihood):
         # Redshift independent parameters - params order: z_reio, sigma_8, n_eff, f_UV, area
         # area is the parameter associated to the extra power wrt to LCDM
 
-        self.zind_param_size = [3, 5, 5, 3, 6] # How many values we have for each param
+        self.zind_param_size = [3, 5, 5, 3, 5] # How many values we have for each param
         self.zind_param_min = np.array([7., 0.754, -2.3474, 0., 0.])   
         self.zind_param_max = np.array([15., 0.904, -2.2674, 1., 1.])  
         zind_param_ref = np.array([9., 0.829, -2.3074, 0., 0.])   
@@ -236,6 +236,27 @@ class Lya_joint(Likelihood):
 
         print("Initialization of Lya likelihood done")
 
+        # print(np.shape(self.input_full_matrix_interpolated_ASTRO))
+        # self.c = 0; tobedel = []
+        # for index in range(len(self.input_full_matrix_interpolated_ASTRO[0,0,:])):
+        #     print(self.input_full_matrix_interpolated_ASTRO[0,:,index])
+        #     if np.all(self.input_full_matrix_interpolated_ASTRO[0,:,index],axis=2) == 1.:
+        #     #     tobedel.append(self.c); print(self.c)
+        #     self.c = self.c + 1
+        # self.tobedel_new = np.delete(tobedel,0)
+        # self.input_full_matrix_interpolated_ASTRO = np.delete(self.input_full_matrix_interpolated_ASTRO,self.tobedel_new,axis=2)
+        # print(np.shape(self.input_full_matrix_interpolated_ASTRO))
+        # print(np.shape(self.X))
+        # print(np.shape(np.unique(self.X,axis=0)))
+        # print(self.PF_ref)
+#         import matplotlib.pyplot as plt
+# #        print(self.PF_ref)
+#         for i in range(len(self.input_full_matrix_interpolated_ASTRO[7,0,:])):
+#             y = np.multiply(self.input_full_matrix_interpolated_ASTRO[7,:,i],self.PF_ref[7,:])
+#             # y = self.input_full_matrix_interpolated_ASTRO[7,:,i]
+#             # print(y)
+#             plt.loglog(self.k_XQ+self.k_mh, y)
+#         plt.show()
 
 
     # The following functions are used elsewhere in the code
@@ -259,14 +280,19 @@ class Lya_joint(Likelihood):
     def ordkrig_estimator(self,p21, z):
     	
         pa10 = []; pb10 = []
+        
         for ii in range(10):    
+        
             pa10.append(self.z_dep_func(p21[-5], p21[-4], z[ii])*1e4/(self.T_max[ii]-self.T_min[ii]))
             pb10.append(self.z_dep_func(p21[-3], p21[-2], z[ii])/(self.g_max[ii]-self.g_min[ii]))
+        
         p37 = np.concatenate((np.array(p21[:14]), np.array(pa10[:]), np.array(pb10[:]), np.array([p21[-1]])))
         astrokrig_result = np.zeros((self.zeta_full_length, self.kappa_full_length), 'float64')
-        
+
         for index in range(len(self.redshift)):
+
             if index < self.num_z_XQ:
+
                 astrokrig_result[index,:] = np.sum(np.multiply(self.ordkrig_lambda(p37[0]/self.zreio_range, p37[1]/self.s8_range, p37[2]/self.neff_range, p37[3]/self.fuv_range, p37[4+index] \
                                                                                /(self.F_prior_max[index]-self.F_prior_min[index]), \
                                                                                p37[14+index], p37[24+index], p37[-1]/self.area_range, \
@@ -274,12 +300,22 @@ class Lya_joint(Likelihood):
                                                                                self.X[:,14+index]/(self.T_max[index]-self.T_min[index]), self.X[:,24+index]/(self.g_max[index]-self.g_min[index]),self.X[:,34]//self.area_range), \
                                                            self.input_full_matrix_interpolated_ASTRO[index,:,:]),axis=1)
             else:
+
                 astrokrig_result[index,:] = np.sum(np.multiply(self.ordkrig_lambda(p37[0]/self.zreio_range, p37[1]/self.s8_range, p37[2]/self.neff_range, p37[3]/self.fuv_range, p37[4+index] \
                                                                                /(self.F_prior_max[index-self.num_z_overlap]-self.F_prior_min[index-self.num_z_overlap]), \
                                                                                p37[14+index], p37[24+index], p37[-1]/self.area_range, \
                                                                                self.X[:,0]/self.zreio_range, self.X[:,1]/self.s8_range, self.X[:,2]/self.neff_range, self.X[:,3]/self.fuv_range, self.X[:,4+index-self.num_z_overlap]/(self.F_prior_max[index-self.num_z_overlap]-self.F_prior_min[index-self.num_z_overlap]), \
                                                                                self.X[:,14+index-self.num_z_overlap]/(self.T_max[index-self.num_z_overlap]-self.T_min[index-self.num_z_overlap]), self.X[:,24+index-self.num_z_overlap]/(self.g_max[index-self.num_z_overlap]-self.g_min[index-self.num_z_overlap]),self.X[:,34]/self.area_range), \
                                                            self.input_full_matrix_interpolated_ASTRO[index-self.num_z_overlap,:,:]),axis=1)
+        # import matplotlib.pyplot as plt
+        # for iz in range(1):
+        #     for im in range(266):
+        #     # plt.loglog(self.k_XQ,astrokrig_result[iz,:len(self.k_XQ)]*self.PF_ref[iz,:len(self.k_XQ)])
+        #     # plt.loglog(self.k_mh,astrokrig_result[iz,:len(self.k_mh)]*self.PF_ref[iz,len(self.k_XQ):])
+        #         plt.loglog(self.k_XQ,self.input_full_matrix_interpolated_ASTRO[iz,:len(self.k_XQ),im]*self.PF_ref[iz,:len(self.k_XQ)])
+        #         plt.loglog(self.k_mh,self.input_full_matrix_interpolated_ASTRO[iz,:len(self.k_mh),im]*self.PF_ref[iz,len(self.k_XQ):])
+        # plt.show()
+        # plt.close()
         return astrokrig_result
 
 
@@ -431,6 +467,8 @@ class Lya_joint(Likelihood):
         theta=np.array([z_reio,sigma8,neff,F_UV,Fz1,Fz2,Fz3,Fz4,Fz5,Fz6,Fz7,Fz8,Fz9,Fz10,T0a,T0s,gamma_a,gamma_s,area])
         
         model = self.PF_ref*self.ordkrig_estimator(theta, self.redshift_list)
+        # print(model)
+        
         upper_block = np.vsplit(model, [7,11])[0]
         lower_block = np.vsplit(model, [7,11])[1]
 
@@ -445,7 +483,10 @@ class Lya_joint(Likelihood):
 
         chi2_MH = np.dot((self.y_MH_reshaped - model_MH_reshaped),np.dot(self.cov_MH_inverted,(self.y_MH_reshaped - model_MH_reshaped)))
         chi2_XQ = np.dot((self.y_XQ_reshaped - model_XQ_reshaped),np.dot(self.cov_XQ_inverted,(self.y_XQ_reshaped - model_XQ_reshaped)))
-
+	
+        # print(0.5*chi2_MH)
+        # print(0.5*chi2_XQ)
+	
         loglkl = - 0.5 * (chi2_MH + chi2_XQ)
 
         return loglkl
